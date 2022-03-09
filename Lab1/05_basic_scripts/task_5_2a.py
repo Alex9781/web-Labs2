@@ -61,16 +61,18 @@ bits[1] = '{:08b}'.format(int(bits[1]))
 bits[2] = '{:08b}'.format(int(bits[2]))
 bits[3] = '{:08b}'.format(int(bits[3]))
 
-print(bits)
+#print(bits)
 bits = (bits[0] + bits[1] + bits[2] + bits[3])[:int(ip[1])] + '0' * (32 - int(ip[1]))
 
 output_template = """
-  Network:
-  {0:<8}  {1:<8}  {2:<8}  {3:<8}
-  {0:08b}  {1:08b}  {2:08b}  {3:08b}
-  Mask: /{4:<8}  
-  {5:<8}  {6:<8d}  {7:<8d}  {8:<8d}
-  {5:08b}  {6:08b}  {7:08b}  {8:08b}
+Network:
+{0:<8}  {1:<8}  {2:<8}  {3:<8}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}
+
+Mask: 
+/{4:<8}  
+{5:<8}  {6:<8d}  {7:<8d}  {8:<8d}
+{5:08b}  {6:08b}  {7:08b}  {8:08b}
 """
 
 print(output_template.format(

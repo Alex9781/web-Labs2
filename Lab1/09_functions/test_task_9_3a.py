@@ -50,7 +50,7 @@ def test_function_return_value():
         },
     )
 
-    return_value = task_9_3a.get_int_vlan_map("config_sw2.txt")
+    return_value = task_9_3a.get_int_vlan_map("Lab1\\09_functions\\config_sw2.txt")
     assert return_value != None, "Функция ничего не возвращает"
     assert (
         type(return_value) == tuple

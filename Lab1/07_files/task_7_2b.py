@@ -35,6 +35,4 @@ for line in file:
         else:
             result += line
 
-output = open(f'./{argv[2]}', 'w')
-
-output.write(result)
+open(argv[2], "w").write(result)

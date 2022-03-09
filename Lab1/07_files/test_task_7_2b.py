@@ -13,7 +13,7 @@ def test_task(monkeypatch, tmpdir):
     """
     dest_filename = tmpdir.mkdir("test_tasks").join("task_7_2b.txt")
 
-    monkeypatch.setattr("sys.argv", ["task_7_2b.py", "config_sw1.txt", dest_filename])
+    monkeypatch.setattr("sys.argv", ["task_7_2b.py", "Lab1\\07_files\\config_sw1.txt", dest_filename])
     import task_7_2b
 
     dest_file_content = dest_filename.read().strip()

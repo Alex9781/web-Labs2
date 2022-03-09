@@ -23,3 +23,22 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+
+from os import access
+
+
+def get_int_vlan_map(config_filename):
+    file = open(config_filename, "r")
+    access = {}
+    trunk = {}
+
+    for line in file:
+        if "interface" in line:
+            interface = line.split()[1]
+        elif "switchport access vlan" in line:
+            vlans = int(line.split()[-1])
+            access[interface] = vlans
+        elif "switchport trunk allowed vlan" in line:
+            vlans = list(map(int, line.split()[-1].split(",")))
+            trunk[interface] = vlans
+    return (access, trunk)

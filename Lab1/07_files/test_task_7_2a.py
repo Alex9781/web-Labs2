@@ -11,7 +11,7 @@ def test_task(capsys, monkeypatch):
     """
     Проверка работы задания при вводе access
     """
-    monkeypatch.setattr("sys.argv", ["task_7_2a.py", "config_sw1.txt"])
+    monkeypatch.setattr("sys.argv", ["task_7_2a.py", "Lab1\\07_files\\config_sw1.txt"])
     import task_7_2a
 
     out, err = capsys.readouterr()

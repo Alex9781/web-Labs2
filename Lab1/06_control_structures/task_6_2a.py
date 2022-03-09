@@ -17,29 +17,32 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
-ip = input('Введите IP-адрес\n')
-ip = ip.split('.')
+ip = input("Введите IP а формате 10.0.1.1: ").split(".")
 
-incorrect = False
-for i in ip:
-    if i.isdigit():
-        if (int(i) < 0 or int(i) > 255):
-            incorrect = True
-            break
-    else:
-        incorrect = True
+correct = True
+
+if len(ip) != 4:
+    correct = False
+
+for oct in ip:
+    if not oct.isdigit():
+        correct = False
+        break
+    if int(oct) < 0 or int(oct) > 255:
+        correct = False
         break
 
-if (incorrect):
-    print('Неправильный IP-адрес')
-else:
-    if 1 < int(ip[0]) < 223:
-        print('unicast')
-    elif 224 < int(ip[0]) < 239:
-        print('multicast')
-    elif int(ip[0]) == 255 and int(ip[1]) == 255 and int(ip[2]) == 255 and int(ip[3]) == 255:
-        print('local broadcast')
-    elif int(ip[0]) == 0 and int(ip[1]) == 0 and int(ip[2]) == 0 and int(ip[3]) == 0:
-        print('unassigned')
+
+if correct:
+    if 0 < int(ip[0]) and int(ip[0]) < 224:
+        print("unicast")
+    elif 223 < int(ip[0]) and int(ip[0]) < 239:
+        print("multicast")
+    elif ip == ["255", "255", "255", "255"]:
+        print("local broadcast")
+    elif ip == ["0", "0", "0", "0"]:
+        print("unassigned")
     else:
-        print('unused')
+        print("unused")
+else:
+    print("Неправильный IP-адрес")

@@ -78,7 +78,7 @@ def test_function_return_value():
         "end": [],
     }
 
-    return_value = task_9_4.convert_config_to_dict("config_sw1.txt")
+    return_value = task_9_4.convert_config_to_dict("Lab1\\09_functions\\config_sw1.txt")
     assert return_value != None, "Функция ничего не возвращает"
     assert (
         type(return_value) == dict

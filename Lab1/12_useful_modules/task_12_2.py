@@ -34,11 +34,18 @@
  '172.21.41.129', '172.21.41.130', '172.21.41.131', '172.21.41.132']
 
 """
-import ipaddress
-
-net4 = ipaddress.ip_network('192.0.2.0/24')
-for x in net4.hosts():
-  print(x)
-
-# print(list(ipaddress.summarize_address_range(ipaddress.ip_address("192.168.88.1"), ipaddress.ip_address("192.168.88.254"))))
-# ipaddress.summarize_address_range()
+def convert_ranges_to_ip_list(ip_list):
+    result = []
+    for i in ip_list:
+        if '-' not in i:
+            result.append(i)
+        else:
+            ip_range = 0
+            if len(i[i.find('-'):]) < 7:
+                ip_range = int(i[i.find('-') + 1:])
+            else:
+                ip_range = int(i[i.rfind('.') + 1:])
+            for number in range(int(i[:i.find('-')][i[:i.find('-')].rfind('.') + 1:]), ip_range + 1):
+                ip_base = i[:i.find('-')][:i[:i.find('-')].rfind('.') + 1]
+                result.append(ip_base + str(number))
+    return result

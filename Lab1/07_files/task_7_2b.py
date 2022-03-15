@@ -20,19 +20,16 @@ from sys import argv
 
 ignore = ["duplex", "alias", "configuration"]
 
-file_name = argv[1]
-
 result = ''
 
-file = open(f'{file_name}', 'r', encoding='UTF-8')
+file = open(argv[1], 'r', encoding='UTF-8')
 
 for line in file:
-    if (line.startswith('!')):
+    if line.startswith('!') or set(ignore) & set(line.split()):
         continue
-    else:
-        if (set(ignore) & set(line.split())):
-            continue
-        else:
-            result += line
+    result += line
 
-open(argv[2], "w").write(result)
+f = open(argv[2], "w")
+f.write(result)
+f.close()
+file.close()

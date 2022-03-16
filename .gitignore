@@ -1,3 +1,4 @@
 .py*
 __py*
 .vs*
+.DS_Store

@@ -24,9 +24,6 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
 
-from os import access
-
-
 def get_int_vlan_map(config_filename):
     file = open(config_filename, "r")
     access = {}
@@ -42,3 +39,4 @@ def get_int_vlan_map(config_filename):
             vlans = list(map(int, line.split()[-1].split(",")))
             trunk[interface] = vlans
     return (access, trunk)
+

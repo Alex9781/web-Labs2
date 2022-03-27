@@ -1,3 +1,25 @@
 .avatar {
     max-width: 100%;
 }
+
+/* footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+} */
+
+/* main {
+    min-height: 81vh;
+} */
+
+body {
+    min-height: 100vh;
+}
+
+.post-text {
+    text-align: justify;
+}
+
+.comment-avatar {
+    max-width: 50px;
+}

@@ -1,7 +1,8 @@
+from random import Random
 from flask import Flask, render_template
 from faker import Faker
 
-fake = Faker()
+fake = Faker("ru_RU")
 
 app = Flask(__name__)
 application = app
@@ -25,6 +26,21 @@ def generate_posts(index):
     }
 
 
+def genarate_comments(count: int, generate_sub: bool):
+    comments = []
+    rnd1 = Random()
+    rnd2 = Random()
+
+    for i in range(count):
+        comments.append({
+            'author': fake.name(),
+            'text': fake.paragraph(nb_sentences=rnd1.randint(1, 5)),
+            'sub_comments' : genarate_comments(rnd2.randint(0, 3), False) if generate_sub else {}
+        })
+
+    return comments
+
+
 posts_list = sorted([generate_posts(i) for i in range(5)], key=lambda x: x['date'], reverse=True)
 
 
@@ -38,10 +54,14 @@ def posts():
     title = "Посты"
     return render_template("posts.html", title=title, posts=posts_list)
 
+
 @app.route("/posts/<int:index>")
 def post(index):
     post = posts_list[index]
-    return render_template('post.html', post=post, title=post['title'])
+    rnd = Random()
+    comments = genarate_comments(rnd.randint(1, 5), True)
+    return render_template('post.html', post=post, title=post['title'], comments=comments)
+
 
 @app.route('/about')
 def about():

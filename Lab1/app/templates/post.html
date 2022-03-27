@@ -1,1 +1,58 @@
 {% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <h1>{{ post.title }}</h1>
+    <p>{{ post['author'] }} {{ post['date'].strftime('%d.%m.%Y') }}</p>
+</div>
+<div class="container d-flex mb-3">
+    <img class="w-75 mx-auto" src="{{ url_for('static', filename='images/' ~ post['image_filename']) }}">
+</div>
+<div class="container">
+    <p class="post-text">{{ post['text']}}</p>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        Оставьте комментарий
+    </div>
+    <div class="card-body">
+        <form>
+            <div class="mb-3">
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    {% for comment in comments %}
+    <!-- Комментарий первого порядка -->
+    <div class="d-flex"> 
+        <div class="flex-shrink-0">
+            <img src="{{ url_for('static', filename='images/avatar.jpg') }}" class="rounded-circle comment-avatar" alt="Sample Image">
+        </div>
+        <div class="flex-grow-1 ms-3">
+            <h5>{{ comment.author }}</h5>
+            <p>{{ comment.text }}</p>
+            
+            {% for sub_comment in comment.sub_comments %}
+            <!-- Комментарий второго порядка -->
+            <div class="d-flex mt-4">
+                <div class="flex-shrink-0">
+                    <img src="{{ url_for('static', filename='images/avatar.jpg') }}" class="rounded-circle comment-avatar" alt="Sample Image">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5>{{ sub_comment.author }}</h5>
+                    <p>{{ sub_comment.text }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

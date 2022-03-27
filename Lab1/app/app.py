@@ -1,5 +1,3 @@
-from tkinter import image_names
-from turtle import title
 from flask import Flask, render_template
 from faker import Faker
 

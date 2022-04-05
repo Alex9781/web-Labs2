@@ -93,7 +93,9 @@ def isPhoneValid(phone: str):
 
         if phone.startswith('8'): 
             startsWith7or8 = True
-            if i == 0: continue
+            if i == 0: 
+                numCount += 1
+                continue
 
         if numbers.find(phone[i]) != -1:
             numCount += 1
@@ -107,3 +109,5 @@ def isPhoneValid(phone: str):
     isValid = False
     errorCode = 'Недопустимый ввод. Неверное количество цифр.'
     return isValid, errorCode
+
+isPhoneValid("8(123)4567590")

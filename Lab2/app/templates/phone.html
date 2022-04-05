@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form class="form-control" method="post">
+        <label for="phone">Телефон</label>
+        <input {% if not isValid %} class="is-invalid" {%endif%} {% if isValid %} class="is-valid" {%endif%} type="text" name="phone" id="phone" value="{{ request.form.phone }}">
+        <button class="btn btn-primary" type="submit">Проверить</button>
+        {% if request.method == 'POST' and output %}
+        <div class="invalid-feedback">
+            {{ output }}
+        </div>
+        <div class="valid-feedback">
+            {{ output }}
+        </div>
+        {% endif %}
+    </form>
+{% endblock %}

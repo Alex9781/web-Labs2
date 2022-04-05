@@ -35,7 +35,7 @@ def genarate_comments(count: int, generate_sub: bool):
         comments.append({
             'author': fake.name(),
             'text': fake.paragraph(nb_sentences=rnd1.randint(1, 5)),
-            'sub_comments' : genarate_comments(rnd2.randint(0, 3), False) if generate_sub else {}
+            'sub_comments' : genarate_comments(rnd2.randint(0, 3), False) if generate_sub else []
         })
 
     return comments

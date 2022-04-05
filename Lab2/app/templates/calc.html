@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post">
+        <input type="text" name="operand1" id="operand1" value="{{ request.form.operand1 }}">
+        <select name="operation" id="operation">
+            {% for operation in operations %}
+            <option {% if request.form.operation == operation %} selected {% endif %}>{{ operation }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="operand2" id="operand2" value="{{ request.form.operand2 }}">
+        <button type="submit" class="btn btn-primary">=</button>
+        <input type="text" disabled value="{{ result or '' }}">
+    </form>
+    {% if request.method == 'POST' and error_msg %}
+    <p style="color: red;">{{ error_msg }}</p>
+    {% endif %}
+{% endblock %}

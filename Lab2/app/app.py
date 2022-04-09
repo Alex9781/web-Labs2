@@ -110,4 +110,4 @@ def isPhoneValid(phone: str):
     errorCode = 'Недопустимый ввод. Неверное количество цифр.'
     return isValid, errorCode
 
-isPhoneValid("8(123)4567590")
+#isPhoneValid("8(123)4567590")

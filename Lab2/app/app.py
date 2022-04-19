@@ -103,7 +103,7 @@ def isPhoneValid(phone: str):
 
     if (numCount == 10 and not startsWith7or8) or numCount == 11:
         isValid = True
-        outputPhone = f'8-{phoneNumbers[0]}{phoneNumbers[1]}{phoneNumbers[2]}-{phoneNumbers[3]}{phoneNumbers[4]}{phoneNumbers[5]}-{phoneNumbers[6]}{phoneNumbers[7]}-{phoneNumbers[8]}{phoneNumbers[9]}'
+        outputPhone = f'8-{phoneNumbers[0:3]}-{phoneNumbers[3]}{phoneNumbers[4]}{phoneNumbers[5]}-{phoneNumbers[6]}{phoneNumbers[7]}-{phoneNumbers[8]}{phoneNumbers[9]}'
         return isValid, outputPhone
 
     isValid = False

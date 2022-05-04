@@ -1,11 +1,11 @@
-from flask import Flask, redirect, render_template, request, session, url_for, flash
+from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from mysql_db import MySQL
 import mysql.connector as connector
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
-login_manager.login_message = 'Для доступа к данной странице необходимо пройти процедуру аутентификации.'
+login_manager.login_message = 'Для доступа к этой странице необходимо пройти процедуру аутентификации'
 login_manager.login_message_category = 'warning'
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ mysql = MySQL(app)
 
 CREATE_PARAMS = ['login', 'password', 'first_name', 'last_name', 'middle_name', 'role_id']
 
-
+UPDATE_PARAMS = [ 'first_name', 'last_name', 'middle_name', 'role_id']
 def request_params(params_list):
     params = {}
 
@@ -43,7 +43,7 @@ class User(UserMixin):
 
 
 @login_manager.user_loader
-def loadUser(user_id):
+def load_user(user_id):
     with mysql.connection.cursor(named_tuple=True) as cursor:
         cursor.execute('SELECT * FROM users WHERE id=%s;', (user_id,))
         db_user = cursor.fetchone()
@@ -96,7 +96,7 @@ def users():
             'SELECT users.*, roles.name AS role_name FROM users LEFT JOIN roles ON users.role_id = roles.id;'
             )
         users = cursor.fetchall()
-
+        
     return render_template('users/index.html', users=users)
 
 
@@ -110,14 +110,65 @@ def new():
 @login_required
 def create():
     params = request_params(CREATE_PARAMS)
-
+    params['role_id'] = int(params['role_id']) if params['role_id'] else None
     with mysql.connection.cursor(named_tuple=True) as cursor:
         try:
-            cursor.execute('INSERT INTO users (login, password_hash, first_name, last_name, middle_name, role_id) VALUES (%(login)s, SHA2(%(password)s, 256), %(first_name)s, %(last_name)s, %(middle_name)s, %(role_id)s);', params)
+            cursor.execute(
+                ('INSERT INTO users (login, password_hash, last_name, first_name, middle_name, role_id)'
+                 'VALUES (%(login)s, SHA2(%(password)s, 256), %(last_name)s, %(first_name)s, %(middle_name)s, %(role_id)s);'),
+                params
+            )
             mysql.connection.commit()
         except connector.Error:
             flash('Введены некорректные данные. Ошибка сохранения', 'danger')
             return render_template('users/new.html', user=params, roles=load_roles())
+    flash(f"Пользователь {params.get('login')} был успешно создан!", 'success')
+    return redirect(url_for('users'))
 
-    flash(f"Пользователь {params.get('login')} был успешно создан.", 'success')
+
+@app.route('/users/<int:user_id>')
+def show(user_id):
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        cursor.execute('SELECT * FROM users WHERE id=%s;', (user_id,))
+        user = cursor.fetchone()
+    return render_template('users/show.html', user=user)
+
+@app.route('/users/<int:user_id>/edit')
+@login_required
+def edit(user_id):
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        cursor.execute('SELECT * FROM users WHERE id=%s;', (user_id,))
+        user = cursor.fetchone()
+    return render_template('users/edit.html', user=user, roles=load_roles())
+
+@app.route('/users/<int:user_id>/update', methods=['POST'])
+@login_required
+def update(user_id):
+    params = request_params(UPDATE_PARAMS)
+    params['role_id'] = int(params['role_id']) if params['role_id'] else None
+    params['id'] = user_id
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        try:
+            cursor.execute(
+                ('UPDATE users SET last_name=%(last_name)s, first_name=%(first_name)s, middle_name=%(middle_name)s, role_id=%(role_id)s,'
+                 'middle_name=%(middle_name)s, role_id=%(role_id)s WHERE id=%(id)s;'), params)
+            mysql.connection.commit()
+        except connector.Error:
+            flash('Введены некорректные данные. Ошибка сохранения', 'danger')
+            return render_template('users/edit.html', user=params, roles=load_roles())
+    flash("Пользователь был успешно обновлен!", 'success')
+    return redirect(url_for('show', user_id=user_id))
+
+@app.route('/users/<int:user_id>/delete', methods=['POST'])
+@login_required
+def delete(user_id):
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        try:
+            cursor.execute(
+                ('DELETE FROM users WHERE id=%s'), (user_id, ))
+            mysql.connection.commit()
+        except connector.Error:
+            flash('Не удалось удалить пользователя', 'danger')
+            return redirect(url_for('users'))
+    flash("Пользователь был успешно удален!", 'success')
     return redirect(url_for('users'))

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Смена пароля</h1>
+
+<form class="container-fluid mt-5" method="POST" style="max-width: 20rem;">
+    <div class="form-floating mb-3">
+        <input autocomplete="off" type="password" class="form-control" name="oldPass" id="oldPass" placeholder="oldPass" required>
+        <label for="oldPass">Старый пароль</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input autocomplete="off" type="password" class="form-control" name="newPass" id="newPass" placeholder="newPass" required>
+        <label for="oldPass">Новый пароль</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input autocomplete="off" type="password" class="form-control" name="newNewPass" id="newNewPass" placeholder="newPass" required>
+        <label for="oldPass">Повторите новый пароль</label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Сменить</button>
+</form>
+
+{% endblock %}

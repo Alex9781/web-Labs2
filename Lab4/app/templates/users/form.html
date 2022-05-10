@@ -1,35 +1,52 @@
-{% macro render_user_form(url, roles, user={}) %}
+{% macro render_user_form(url, roles, errorCodes={}, user={}) %}
 <form action="{{ url }}" method="POST" style="max-width: 40rem;">
-    {% if request.endpoint in ['new', 'create']  %}
-        <div class="row mb-3">
-            <label for="login" class="col-sm-2 col-form-label">Логин</label>
-            <div class="col-sm-10">
-            <input type="text" class="form-control" name="login" id="login" value="{{ user.login or '' }}">
+    {% if request.endpoint in ['new', 'create'] %}
+    <div class="row mb-3">
+        <label for="login" class="col-sm-2 col-form-label">Логин</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control {% if errorCodes['login'] is not none %} is-invalid {% endif %}" name="login"
+                id="login" aria-describedby="loginValid" value="{{ user.login or '' }}">
+            <div id="loginValid" class="invalid-feedback">
+                {{ errorCodes['login'] }}
             </div>
         </div>
-        <div class="row mb-3">
-            <label for="password" class="col-sm-2 col-form-label">Пароль</label>
-            <div class="col-sm-10">
-            <input type="password" class="form-control" name="password" id="password" value="{{ user.password or '' }}">
+    </div>
+    <div class="row mb-3">
+        <label for="password" class="col-sm-2 col-form-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control {% if errorCodes['password'] is not none %} is-invalid {% endif %}"
+                name="password" id="password" aria-describedby="passwordValid" value="{{ user.password or '' }}">
+            <div id="passwordValid" class="invalid-feedback">
+                {{ errorCodes['password'] }}
             </div>
         </div>
+    </div>
     {% endif %}
     <div class="row mb-3">
         <label for="last_name" class="col-sm-2 col-form-label">Фамилия</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" name="last_name" id="last_name" value="{{ user.last_name or '' }}">
+            <input type="text" class="form-control {% if errorCodes.get('last_name') is not none %} is-invalid {% endif %}"
+                name="last_name" id="last_name" aria-describedby="lastNameValid" value="{{ user.last_name or '' }}">
+            <div id="lastNameValid" class="invalid-feedback">
+                {{ errorCodes['last_name'] }}
+            </div>
         </div>
     </div>
     <div class="row mb-3">
         <label for="first_name" class="col-sm-2 col-form-label">Имя</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" name="first_name" id="first_name" value="{{ user.first_name or '' }}">
+            <input type="text" class="form-control {% if errorCodes.get('first_name') is not none %} is-invalid {% endif %}"
+                name="first_name" id="first_name" aria-describedby="firstNameValid" value="{{ user.first_name or '' }}">
+            <div id="firstNameValid" class="invalid-feedback">
+                {{ errorCodes['first_name'] }}
+            </div>
         </div>
     </div>
     <div class="row mb-3">
         <label for="middle_name" class="col-sm-2 col-form-label">Отчество</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" name="middle_name" id="middle_name" value="{{ user.middle_name or '' }}">
+            <input type="text" class="form-control" name="middle_name" id="middle_name"
+                value="{{ user.middle_name or '' }}">
         </div>
     </div>
     <div class="row mb-3">
@@ -38,7 +55,7 @@
             <select class="form-select" name="role_id" id="role_id">
                 <option value="">Без роли</option>
                 {% for role in roles %}
-                    <option value="{{ role.id }}" {%  if user.role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
+                <option value="{{ role.id }}" {% if user.role_id==role.id %}selected{% endif %}>{{ role.name }}</option>
                 {% endfor %}
             </select>
         </div>

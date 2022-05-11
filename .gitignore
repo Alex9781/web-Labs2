@@ -3,4 +3,4 @@ __py*
 .vs*
 .DS_Store
 ve
-config.py
+#config.py

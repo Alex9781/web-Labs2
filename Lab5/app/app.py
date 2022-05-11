@@ -15,9 +15,26 @@ CREATE_PARAMS = ['login', 'password', 'first_name', 'last_name', 'middle_name', 
 UPDATE_PARAMS = [ 'first_name', 'last_name', 'middle_name', 'role_id']
 
 from auth import init_login_manager, bp as auth_bp, check_rights
+from visits import bp as visits_bp
 
 init_login_manager(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(visits_bp)
+
+@app.before_request
+def log_visit_info():
+    if request.endpoint == 'static' or request.args.get('download_csv'):
+        return None
+
+    user_id = getattr(current_user, 'id', None)
+    query = 'INSERT INTO visit_logs (user_id, path) VALUES (%s, %s);'
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        try:
+            cursor.execute(query,(user_id, request.path))
+            mysql.connection.commit()
+        except:
+            pass
+
 
 def request_params(params_list):
     params = {}

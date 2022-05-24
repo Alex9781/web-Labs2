@@ -69,5 +69,18 @@ def users_stat():
 
 @bp.route('/stats/pages')
 def pages_stat():
-    records = []
+    query = ('SELECT DISTINCT(path), COUNT(*) as count' 
+            ' FROM visit_logs' 
+            ' GROUP BY path'
+            ' ORDER BY count DESC;')
+
+    with mysql.connection.cursor(named_tuple=True) as cursor:
+        cursor.execute(query)
+        records = cursor.fetchall()
+
+    if request.args.get('download_csv'):
+        f = generate_report(records)
+        filename = datetime.datetime.now().strftime('%d_%m_%y_%H_%M_%S') + '_pages_stat.csv'
+        return send_file(f, mimetype='text/csv', as_attachment=True, attachment_filename=filename)
+
     return render_template('visits/pages_stat.html', records=records)

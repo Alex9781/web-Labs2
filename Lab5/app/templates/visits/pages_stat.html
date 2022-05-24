@@ -8,27 +8,23 @@
     <thead>
         <tr>
             <th>№</th>
-            <th>Пользователь</th>
             <th>Страница</th>
-            <th>Дата</th>
+            <th>Количество посещений</th>
         </tr>
     </thead>
     <tbody>
         {% for record in records %}
             <tr>
-                <td>{{ loop.index }}</td>
-                <td>
-                    {% if record.user_id %}
-                        {{ record.last_name }} {{ record.first_name}} {{ record.middle_name or ''}}
-                    {% else %}
-                        Неаутентифициронванный пользователь
-                    {% endif%}
-                </td>
-                <td>{{ record.path }}</td>
-                <td>{{ record.created_at.strftime('%d.%m.%y %H:%M:%S') }}</td>
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ record.path }}</td>
+                    <td>{{ record.count }}</td>
+                </tr>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<a href="{{ url_for('visits.pages_stat', download_csv='True') }}" class="btn btn-primary">Экспорт в csv</a>
 
 {% endblock %}

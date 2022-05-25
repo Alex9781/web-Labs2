@@ -60,6 +60,7 @@ def logs():
 
 
 @bp.route('/stats/users')
+@login_required
 @check_rights('see_logs')
 def users_stat():
     query = ('SELECT users.last_name, users.first_name, users.middle_name, COUNT(*) AS count'
@@ -80,6 +81,7 @@ def users_stat():
 
 
 @bp.route('/stats/pages')
+@login_required
 @check_rights('see_logs')
 def pages_stat():
     query = ('SELECT DISTINCT(path), COUNT(*) as count' 

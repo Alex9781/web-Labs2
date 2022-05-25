@@ -1,8 +1,10 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash, Blueprint, send_file
+from flask_login import current_user, login_required
 from app import mysql
 import math
 import io
 import datetime
+from auth import check_rights
 
 bp = Blueprint('visits', __name__, url_prefix='/visits')
 
@@ -26,14 +28,23 @@ def generate_report(records):
 
 
 @bp.route('/logs')
+@login_required
 def logs():
     page = request.args.get('page', 1, type=int)
 
-    query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
-            ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id' 
-            ' ORDER BY visit_logs.created_at DESC' 
-            ' LIMIT %s'
-            ' OFFSET %s;')
+    if current_user.can('see_logs'):
+        query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
+                ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id' 
+                ' ORDER BY visit_logs.created_at DESC' 
+                ' LIMIT %s'
+                ' OFFSET %s;')
+    else:
+        query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
+                ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id'
+               f' WHERE users.id = {current_user.id}' 
+                ' ORDER BY visit_logs.created_at DESC' 
+                ' LIMIT %s'
+                ' OFFSET %s;')
 
     with mysql.connection.cursor(named_tuple=True) as cursor:
         cursor.execute(query, (PER_PAGE, PER_PAGE*(page-1)))
@@ -49,6 +60,7 @@ def logs():
 
 
 @bp.route('/stats/users')
+@check_rights('see_logs')
 def users_stat():
     query = ('SELECT users.last_name, users.first_name, users.middle_name, COUNT(*) AS count'
             ' FROM users RIGHT JOIN visit_logs ON visit_logs.user_id = users.id' 
@@ -68,6 +80,7 @@ def users_stat():
 
 
 @bp.route('/stats/pages')
+@check_rights('see_logs')
 def pages_stat():
     query = ('SELECT DISTINCT(path), COUNT(*) as count' 
             ' FROM visit_logs' 

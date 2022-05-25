@@ -80,7 +80,7 @@ def logout():
 
 def init_login_manager(app: Flask):
     login_manager = LoginManager()
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Для доступа к этой странице необходимо пройти процедуру аутентификации'
     login_manager.login_message_category = 'warning'
     login_manager.user_loader(load_user)

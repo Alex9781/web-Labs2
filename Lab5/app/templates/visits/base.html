@@ -9,7 +9,7 @@
         <a class="nav-link {% if request.endpoint == 'visits.logs' %} active {% endif %}" aria-current="page"
             href="{{ url_for('visits.logs') }}">Журнал посещений</a>
     </li>
-    {% if current_user.can('watch_stat') %}
+    {% if current_user.can('see_logs') %}
     <li class="nav-item">
         <a class="nav-link {% if request.endpoint == 'visits.pages_stat' %} active {% endif %}"
             href="{{ url_for('visits.pages_stat') }}">Статистика по страницам</a>

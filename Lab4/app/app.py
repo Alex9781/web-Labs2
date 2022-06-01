@@ -215,6 +215,7 @@ def change():
             isPassValid = validate_password(newPass_)
             if isPassValid is not None:
                 flash(isPassValid, 'danger')
+                return render_template('change.html')
             
             with mysql.connection.cursor(named_tuple=True) as cursor:
                 cursor.execute(

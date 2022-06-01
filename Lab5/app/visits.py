@@ -86,7 +86,7 @@ def users_stat():
 @login_required
 @check_rights('see_logs')
 def pages_stat():
-    query = ('SELECT DISTINCT(path), COUNT(*) as count' 
+    query = ('SELECT path, COUNT(*) as count' 
             ' FROM visit_logs' 
             ' GROUP BY path'
             ' ORDER BY count DESC;')

@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_file, abort, send_from_directory
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import os
 
 app = Flask(__name__)
 application = app
@@ -20,7 +21,7 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db)
 
-from models import Category, User
+from models import Category, User, Image
 
 from auth import bp as auth_bp, init_login_manager
 from courses import bp as courses_bp
@@ -37,3 +38,12 @@ def index():
         'index.html', 
         categories=categories,
     )
+
+@app.route('/media/images/<image_id>')
+def image(image_id):
+    image = Image.query.get(image_id)
+
+    if image is None:
+        abort(404)
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], image.storage_filename)

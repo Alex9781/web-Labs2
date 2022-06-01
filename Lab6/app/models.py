@@ -1,3 +1,4 @@
+from flask import url_for
 import sqlalchemy as sa
 from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -96,3 +97,7 @@ class Image(db.Model):
     def storage_filename(self):
         _, ext = os.path.splitext(self.file_name)
         return self.id + ext
+
+    @property
+    def url(self):
+        return url_for('image', image_id=self.id)

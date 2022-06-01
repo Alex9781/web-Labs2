@@ -33,12 +33,14 @@ def logs():
     page = request.args.get('page', 1, type=int)
 
     if current_user.can('see_logs'):
+        count_query = ('SELECT COUNT(*) AS count from visit_logs')
         query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
                 ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id' 
                 ' ORDER BY visit_logs.created_at DESC' 
                 ' LIMIT %s'
                 ' OFFSET %s;')
     else:
+        count_query = (f'SELECT COUNT(*) AS count from visit_logs WHERE user_id = {current_user.id}')
         query = ('SELECT visit_logs.*, users.last_name, users.first_name, users.middle_name' 
                 ' FROM visit_logs LEFT JOIN users ON visit_logs.user_id = users.id'
                f' WHERE users.id = {current_user.id}' 
@@ -51,7 +53,7 @@ def logs():
         records = cursor.fetchall()
 
     with mysql.connection.cursor(named_tuple=True) as cursor:
-        cursor.execute('SELECT COUNT(*) AS count from visit_logs')
+        cursor.execute(count_query)
         total_count = cursor.fetchone().count
 
     total_pages = math.ceil(total_count/PER_PAGE)

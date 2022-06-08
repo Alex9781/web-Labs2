@@ -1,6 +1,8 @@
+from cgitb import text
 from flask import Blueprint, redirect, render_template, request, flash, url_for
+from flask_login import current_user
 from app import db
-from models import Course, Category, User
+from models import Course, Category, Review, User
 from tools import CoursesFilter, ImageSaver
 
 bp = Blueprint('courses', __name__, url_prefix='/courses')
@@ -60,5 +62,48 @@ def create():
 
 @bp.route('/<int:course_id>')
 def show(course_id):
+    reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc()).limit(5).all()
     course = Course.query.get(course_id)
-    return render_template('courses/show.html', course=course)
+
+    if current_user.is_authenticated:
+        user_review = Review.query.filter(Review.course_id == course_id).filter(Review.user_id == current_user.id).first()
+
+    return render_template('courses/show.html', course=course, reviews=reviews, user_review=user_review)
+
+@bp.route('/<int:course_id>/reviews')
+def reviews(course_id):
+    page = request.args.get('page', 1, type=int)
+    sort_type = request.args.get('filters')
+    reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
+
+    if sort_type == 'new': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
+    elif sort_type == 'old': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.asc())
+    elif sort_type == 'pos': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.rating.desc())
+    elif sort_type == 'neg': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.rating.asc())
+
+    pagination = reviews.paginate(page, PER_PAGE)
+    reviews = reviews.paginate(page, PER_PAGE).items
+
+    if current_user.is_authenticated:
+        user_review = Review.query.filter(Review.course_id == course_id).filter(Review.user_id == current_user.id).first()
+
+    return render_template('courses/reviews.html', reviews=reviews, pagination=pagination, user_review=user_review)
+    #return render_template('courses/reviews.html', reviews=reviews, pagination=pagination)
+
+
+@bp.route('/<int:course_id>/reviews/create', methods=["POST"])
+def create_review(course_id):
+    user_id = current_user.id
+    review_rating = request.form.get('review-rating')
+    review_text = request.form.get('review-text')
+
+    user_review = Review(user_id=user_id, rating=review_rating, text=review_text, course_id=course_id)
+    db.session.add(user_review)
+
+    course = Course.query.get(course_id)
+    course.rating_num += 1
+    course.rating_sum += int(review_rating)
+
+    db.session.commit()
+
+    return redirect(url_for('courses.index'))

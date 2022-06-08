@@ -76,6 +76,7 @@ def reviews(course_id):
     page = request.args.get('page', 1, type=int)
     sort_type = request.args.get('filters')
     reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
+    course = Course.query.get(course_id)
 
     if sort_type == 'new': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
     elif sort_type == 'old': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.asc())
@@ -89,7 +90,7 @@ def reviews(course_id):
     if current_user.is_authenticated:
         user_review = Review.query.filter(Review.course_id == course_id).filter(Review.user_id == current_user.id).first()
 
-    return render_template('courses/reviews.html', reviews=reviews, pagination=pagination, user_review=user_review)
+    return render_template('courses/reviews.html', reviews=reviews, pagination=pagination, user_review=user_review, course=course)
     #return render_template('courses/reviews.html', reviews=reviews, pagination=pagination)
 
 

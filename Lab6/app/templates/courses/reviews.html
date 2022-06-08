@@ -51,7 +51,7 @@
     {% if not user_review and current_user.is_authenticated %}
     <h2>Оставить отзыв</h2>
     
-    <form class="mb-5 mt-3 row align-items-center" method="post" action="{{ url_for('courses.create_review', course_id = reviews[0].course.id) }}">
+    <form class="mb-5 mt-3 row align-items-center" method="post" action="{{ url_for('courses.create_review', course_id = course.id) }}">
         <div class="col-md-4 my-3">
             <select class="form-select" id="review-rating" name="review-rating" title="Рейтинг">
                 <option value="5" selected>Отлично</option>

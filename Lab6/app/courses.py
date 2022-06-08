@@ -65,6 +65,7 @@ def show(course_id):
     reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc()).limit(5).all()
     course = Course.query.get(course_id)
 
+    user_review = None
     if current_user.is_authenticated:
         user_review = Review.query.filter(Review.course_id == course_id).filter(Review.user_id == current_user.id).first()
 
@@ -84,6 +85,7 @@ def reviews(course_id):
     pagination = reviews.paginate(page, PER_PAGE)
     reviews = reviews.paginate(page, PER_PAGE).items
 
+    user_review = None
     if current_user.is_authenticated:
         user_review = Review.query.filter(Review.course_id == course_id).filter(Review.user_id == current_user.id).first()
 

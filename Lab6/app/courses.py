@@ -75,13 +75,16 @@ def show(course_id):
 def reviews(course_id):
     page = request.args.get('page', 1, type=int)
     sort_type = request.args.get('filters')
-    reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
+    q = Review.query.filter(Review.course_id == course_id)
+    #reviews = q.order_by(Review.created_at.desc())
     course = Course.query.get(course_id)
 
-    if sort_type == 'new': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.desc())
-    elif sort_type == 'old': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.created_at.asc())
-    elif sort_type == 'pos': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.rating.desc())
-    elif sort_type == 'neg': reviews = Review.query.filter(Review.course_id == course_id).order_by(Review.rating.asc())
+
+    #if sort_type == 'new': reviews = q.order_by(Review.created_at.desc())
+    if sort_type == 'old': reviews = q.order_by(Review.created_at.asc())
+    elif sort_type == 'pos': reviews = q.order_by(Review.rating.desc())
+    elif sort_type == 'neg': reviews = q.order_by(Review.rating.asc())
+    else: reviews = q.order_by(Review.created_at.desc())
 
     pagination = reviews.paginate(page, PER_PAGE)
     reviews = reviews.paginate(page, PER_PAGE).items
